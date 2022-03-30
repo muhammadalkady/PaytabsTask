@@ -1,4 +1,4 @@
-package kady.muhammad.paytabstask.ui.theme
+package kady.muhammad.paytabstask.presentation.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

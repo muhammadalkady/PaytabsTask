@@ -1,4 +1,4 @@
-package kady.muhammad.paytabstask.ui.theme
+package kady.muhammad.paytabstask.presentation.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

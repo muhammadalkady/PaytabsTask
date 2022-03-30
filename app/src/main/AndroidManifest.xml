@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PaytabsTask">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PaytabsTask">
             <intent-filter>
