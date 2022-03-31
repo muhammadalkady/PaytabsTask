@@ -5,6 +5,7 @@ import kady.muhammad.ext.MockedServer
 import kady.muhammad.paytabstask.domain.DataCharactersToDomainCharacters
 import kady.muhammad.paytabstask.domain.Repo
 import kady.muhammad.paytabstask.domain.Result
+import kady.muhammad.paytabstask.presentation.entities.DomainCharacterToUICharacter
 import kady.muhammad.paytabstask.presentation.screens.characters_screen.CharactersViewModel
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
@@ -17,7 +18,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import org.mockito.MockitoAnnotations
 
-
 @RunWith(JUnit4::class)
 class CharactersViewModelTest {
     @get:Rule
@@ -26,13 +26,14 @@ class CharactersViewModelTest {
     private var viewModel: CharactersViewModel? = null
     private var repo: Repo? = null
     private val dataCharactersToDomainCharacters = DataCharactersToDomainCharacters()
+    private val domainCharacterToUICharacter = DomainCharacterToUICharacter()
 
     @Before
     fun setUp() {
         MockitoAnnotations.openMocks(this)
         server.start()
         repo = Repo(server.marvelAPI, dataCharactersToDomainCharacters)
-        viewModel = CharactersViewModel(repo!!)
+        viewModel = CharactersViewModel(repo!!, domainCharacterToUICharacter)
     }
 
     @Test
