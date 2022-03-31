@@ -4,14 +4,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.skydoves.landscapist.CircularReveal
+import com.skydoves.landscapist.ShimmerParams
+import com.skydoves.landscapist.coil.CoilImage
 import kady.muhammad.paytabstask.presentation.ui.Loader
 import kady.muhammad.paytabstask.app.Result
 import kady.muhammad.paytabstask.presentation.entities.UICharacter
@@ -38,10 +42,18 @@ fun CharactersScreen(viewModel: CharactersViewModel) {
 fun CharactersList(viewModel: CharactersViewModel, characters: List<UICharacter>, page: Int) {
     LazyColumn {
         items(characters.size) { i ->
-            AsyncImage(
-                model = characters[i].image,
+            CoilImage(
+                characters[i].image,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
+                circularReveal = CircularReveal(duration = 350),
+                shimmerParams = ShimmerParams(
+                    baseColor = MaterialTheme.colors.background,
+                    highlightColor = Color.Gray,
+                    durationMillis = 350,
+                    dropOff = 0.65f,
+                    tilt = 20f
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
