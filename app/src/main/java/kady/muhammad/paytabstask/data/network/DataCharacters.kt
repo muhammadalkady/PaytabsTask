@@ -9,7 +9,7 @@ import kotlinx.serialization.SerialName
 @Keep
 @Serializable
 @Parcelize
-data class CharactersListResponse(
+data class DataCharacters(
     @SerialName("attributionHTML")
     val attributionHTML: String,
     @SerialName("attributionText")

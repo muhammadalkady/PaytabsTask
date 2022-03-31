@@ -2,6 +2,7 @@ package kady.muhammad.paytabstask
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kady.muhammad.ext.MockedServer
+import kady.muhammad.paytabstask.domain.DataCharactersToDomainCharacters
 import kady.muhammad.paytabstask.domain.Repo
 import kady.muhammad.paytabstask.domain.Result
 import kady.muhammad.paytabstask.presentation.screens.characters_screen.CharactersViewModel
@@ -24,12 +25,13 @@ class CharactersViewModelTest {
     private val server: MockedServer = MockedServer()
     private var viewModel: CharactersViewModel? = null
     private var repo: Repo? = null
+    private val dataCharactersToDomainCharacters = DataCharactersToDomainCharacters()
 
     @Before
     fun setUp() {
         MockitoAnnotations.openMocks(this)
         server.start()
-        repo = Repo(server.marvelAPI)
+        repo = Repo(server.marvelAPI, dataCharactersToDomainCharacters)
         viewModel = CharactersViewModel(repo!!)
     }
 

@@ -51,7 +51,7 @@ class MarvelAPI(baseURL: String = BuildConfig.BASE_URL) {
      * @return CharactersListResponse parsed from json.
      * */
     suspend fun getCharacterList(offset: Int):
-            CharactersListResponse {
+            DataCharacters {
         return service.getCharactersList(LIMIT, offset)
     }
 

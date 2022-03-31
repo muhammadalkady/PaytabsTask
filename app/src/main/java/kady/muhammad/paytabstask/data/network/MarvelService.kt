@@ -10,7 +10,7 @@ interface MarvelService {
     suspend fun getCharactersList(
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
-    ): CharactersListResponse
+    ): DataCharacters
 
 
     companion object {
