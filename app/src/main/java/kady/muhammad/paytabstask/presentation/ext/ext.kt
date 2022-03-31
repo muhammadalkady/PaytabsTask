@@ -1,7 +1,7 @@
 package kady.muhammad.paytabstask.presentation.ext
 
 import kady.muhammad.paytabstask.app.Mapper
-import kady.muhammad.paytabstask.domain.Result
+import kady.muhammad.paytabstask.app.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow

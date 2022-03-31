@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kady.muhammad.ext.MockedServer
 import kady.muhammad.paytabstask.domain.DataCharactersToDomainCharacters
 import kady.muhammad.paytabstask.domain.Repo
-import kady.muhammad.paytabstask.domain.Result
+import kady.muhammad.paytabstask.app.Result
 import kady.muhammad.paytabstask.presentation.entities.DomainCharacterToUICharacter
 import kady.muhammad.paytabstask.presentation.screens.characters_screen.CharactersViewModel
 import kotlinx.coroutines.flow.drop

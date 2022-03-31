@@ -1,4 +1,4 @@
-package kady.muhammad.paytabstask.domain
+package kady.muhammad.paytabstask.app
 
 sealed class Result {
     object Loading : Result()

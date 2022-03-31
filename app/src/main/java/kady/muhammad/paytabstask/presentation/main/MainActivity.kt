@@ -22,6 +22,7 @@ import kady.muhammad.paytabstask.R
 import kady.muhammad.paytabstask.presentation.screens.characters_screen.CharactersScreen
 import kady.muhammad.paytabstask.presentation.ui.theme.Black
 import kady.muhammad.paytabstask.presentation.ui.theme.PaytabsTaskTheme
+import org.koin.androidx.compose.getViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,14 +33,7 @@ class MainActivity : ComponentActivity() {
             val systemUiController = rememberSystemUiController()
             SideEffect { setSystemBarColors(systemUiController) }
             PaytabsTaskTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Scaffold(topBar = { AppTopBar() }) {
-                        CharactersScreen()
-                    }
-                }
+                App()
             }
         }
     }
@@ -53,6 +47,18 @@ class MainActivity : ComponentActivity() {
 
 }
 
+@Composable
+private fun App() {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colors.background
+    ) {
+        Scaffold(topBar = { AppTopBar() }) {
+            CharactersScreen(getViewModel())
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun AppTopBar() {
@@ -62,14 +68,5 @@ private fun AppTopBar() {
             painter = painterResource(id = R.drawable.ic_marvel_logo),
             contentDescription = null, alignment = Alignment.Center
         )
-    }
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    PaytabsTaskTheme {
-        CharactersScreen()
     }
 }
