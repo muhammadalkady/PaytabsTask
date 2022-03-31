@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flow
 fun <T, O> callAPI(
     mapper: Mapper<T, O>,
     block: suspend () -> T,
-): Flow<Result> = flow {
+): Flow<Result<O>> = flow {
     emit(Result.Loading)
     emit(Result.Success(mapper.map(block())))
 }.catch { e -> emit(Result.Error(e.message ?: "UnKnown")) }

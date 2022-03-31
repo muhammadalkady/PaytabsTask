@@ -22,14 +22,9 @@ import kady.muhammad.paytabstask.presentation.entities.UICharacter
 fun CharactersScreen(viewModel: CharactersViewModel) {
     val value by viewModel.result.collectAsState(initial = Result.Loading)
     when (value) {
-        is Result.Error -> Text(text = "Error")
-        Result.Loading -> Box {
-            Loader()
-        }
-        is Result.Success<*> -> CharactersList(
-            characters =
-            (value as Result.Success<*>).data as List<UICharacter>
-        )
+        is Result.Error -> Text(text = (value as Result.Error).message)
+        Result.Loading -> Loader()
+        is Result.Success<*> -> CharactersList((value as Result.Success<List<UICharacter>>).data)
     }
 }
 
@@ -45,6 +40,11 @@ fun CharactersList(characters: List<UICharacter>) {
                     .fillMaxWidth()
                     .height(150.dp)
             )
+        }
+        item {
+            Box(modifier = Modifier.height(100.dp)) {
+                Loader()
+            }
         }
     }
 }

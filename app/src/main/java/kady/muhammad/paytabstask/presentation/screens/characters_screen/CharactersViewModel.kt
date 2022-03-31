@@ -3,6 +3,7 @@ package kady.muhammad.paytabstask.presentation.screens.characters_screen
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kady.muhammad.paytabstask.app.CharactersResult
 import kady.muhammad.paytabstask.domain.Repo
 import kady.muhammad.paytabstask.app.Result
 import kady.muhammad.paytabstask.presentation.entities.DomainCharacterToUICharacter
@@ -19,8 +20,8 @@ class CharactersViewModel(
     offset: Int
 ) : ViewModel() {
 
-    private val _result: MutableStateFlow<Result> = MutableStateFlow(Result.Loading)
-    val result: StateFlow<Result> get() = _result
+    private val _result: MutableStateFlow<CharactersResult> = MutableStateFlow(Result.Loading)
+    val result: StateFlow<CharactersResult> get() = _result
 
     init {
         charactersList(offset = offset)
