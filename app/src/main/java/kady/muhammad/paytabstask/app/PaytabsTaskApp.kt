@@ -33,5 +33,11 @@ val appModule = module {
     single { domainCharacterToUICharacter }
     single { marvelAPI }
     single { repo }
-    viewModel { CharactersViewModel(repo = repo, domainCharacterToUICharacter) }
+    viewModel {
+        CharactersViewModel(
+            repo = repo,
+            domainCharacterToUICharacter = domainCharacterToUICharacter,
+            offset = 0
+        )
+    }
 }

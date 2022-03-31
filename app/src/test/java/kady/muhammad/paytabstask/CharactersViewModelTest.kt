@@ -7,9 +7,11 @@ import kady.muhammad.paytabstask.domain.Repo
 import kady.muhammad.paytabstask.app.Result
 import kady.muhammad.paytabstask.presentation.entities.DomainCharacterToUICharacter
 import kady.muhammad.paytabstask.presentation.screens.characters_screen.CharactersViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.newFixedThreadPoolContext
+import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -30,37 +32,44 @@ class CharactersViewModelTest {
 
     @Before
     fun setUp() {
+        Dispatchers.setMain(newFixedThreadPoolContext(1, "Test Thread"))
         MockitoAnnotations.openMocks(this)
         server.start()
         repo = Repo(server.marvelAPI, dataCharactersToDomainCharacters)
-        viewModel = CharactersViewModel(repo!!, domainCharacterToUICharacter)
+        viewModel = CharactersViewModel(
+            cc = Dispatchers.Main,
+            repo = repo!!,
+            domainCharacterToUICharacter = domainCharacterToUICharacter,
+            offset = 0
+        )
     }
 
     @Test
-    fun `charactersList first emits loading`(): Unit = runBlocking {
+    fun `charactersList first emits loading`(): Unit = runTest {
         server.enqueueSuccess()
-        val result = viewModel!!.charactersList(offset = 0).first()
+        val result = viewModel!!.result.first()
         assert(result == Result.Loading)
     }
 
     @Test
-    fun `charactersList emits success after loading`(): Unit = runBlocking {
+    fun `charactersList emits success after loading`(): Unit = runTest {
         server.enqueueSuccess()
-        val result = viewModel!!.charactersList(offset = 0).drop(1).first()
+        val result = viewModel!!.result.drop(1).first()
         assert(result is Result.Success<*>)
     }
 
     @Test
-    fun `charactersList emits error`(): Unit = runBlocking {
+    fun `charactersList emits error`(): Unit = runTest {
         //Enqueue Server Error 500
         server.enqueueError(500)
         //Pass invalid offset
-        val result = viewModel!!.charactersList(offset = -1).drop(1).first()
+        val result = viewModel!!.result.drop(1).first()
         assert(result is Result.Error)
     }
 
     @After
     fun tearDown() {
+        Dispatchers.resetMain()
         viewModel = null
         repo = null
         server.shutdown()
