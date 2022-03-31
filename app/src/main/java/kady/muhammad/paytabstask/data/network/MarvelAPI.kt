@@ -8,22 +8,58 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 
-
 class MarvelAPI(baseURL: String = BuildConfig.BASE_URL) {
+    /**
+     * Marvel API body content type.
+     * */
+    private val contentType = "application/json".toMediaType()
+
+    /**
+     * Logging interceptor for debugging
+     * */
     private val logging =
         HttpLoggingInterceptor().apply { setLevel(HttpLoggingInterceptor.Level.BASIC) }
+
+    /**
+     * OkHttp client with logging interceptor in debugging only
+     * */
     private val client: OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(logging)
+        .apply {
+            if (BuildConfig.DEBUG)
+                addInterceptor(logging)
+        }
         .build()
-    private val contentType = "application/json".toMediaType()
+
+    /**
+     * Build a retrofit instance with Marvel base URL and our OkHttp client
+     * */
     private val retrofit = Retrofit.Builder()
         .client(client)
         .baseUrl(baseURL)
         .addConverterFactory(Json.asConverterFactory(contentType))
         .build()
+
+    /**
+     * Create Marvel service instance
+     * */
     private val service = retrofit.create(MarvelService::class.java)
 
-    suspend fun getCharacterList(limit: Int = 10, offset: Int): CharactersListResponse {
-        return service.getCharactersList(limit, offset)
+
+    /**
+     * Get characters list from Marvel API
+     * @param offset an offset to start from it.
+     * @return CharactersListResponse parsed from json.
+     * */
+    suspend fun getCharacterList(offset: Int):
+            CharactersListResponse {
+        return service.getCharactersList(LIMIT, offset)
     }
+
+    companion object {
+        /**
+         * This is the max items that an API can return at one time.
+         * */
+        private const val LIMIT = 10
+    }
+
 }

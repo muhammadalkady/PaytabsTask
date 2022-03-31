@@ -1,4 +1,4 @@
-package kady.muhammad.paytabstask.presentation.characters_screen
+package kady.muhammad.paytabstask.presentation.screens.characters_screen
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable

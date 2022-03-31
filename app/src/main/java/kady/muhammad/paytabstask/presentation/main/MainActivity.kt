@@ -11,13 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kady.muhammad.paytabstask.R
-import kady.muhammad.paytabstask.presentation.characters_screen.CharactersScreen
+import kady.muhammad.paytabstask.presentation.screens.characters_screen.CharactersScreen
 import kady.muhammad.paytabstask.presentation.ui.theme.Black
 import kady.muhammad.paytabstask.presentation.ui.theme.PaytabsTaskTheme
 
@@ -28,16 +30,8 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContent {
             val systemUiController = rememberSystemUiController()
-            SideEffect {
-                // Update all of the system bar colors to be transparent, and use
-                // dark icons if we're in light theme
-                systemUiController.setSystemBarsColor(
-                    color = Black,
-                    darkIcons = false
-                )
-            }
+            SideEffect { setSystemBarColors(systemUiController) }
             PaytabsTaskTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
@@ -50,11 +44,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun setSystemBarColors(systemUiController: SystemUiController) {
+        systemUiController.setSystemBarsColor(
+            color = Black,
+            darkIcons = false
+        )
+    }
+
 }
 
+@Preview(showBackground = true)
 @Composable
 private fun AppTopBar() {
-    TopAppBar {
+    TopAppBar(backgroundColor = Color.Black) {
         Image(
             modifier = Modifier.fillMaxSize(),
             painter = painterResource(id = R.drawable.ic_marvel_logo),

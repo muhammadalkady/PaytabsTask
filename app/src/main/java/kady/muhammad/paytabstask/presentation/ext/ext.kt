@@ -1,4 +1,4 @@
-package kady.muhammad.paytabstask.presentation.main
+package kady.muhammad.paytabstask.presentation.ext
 
 import kady.muhammad.paytabstask.domain.Result
 import kotlinx.coroutines.flow.Flow

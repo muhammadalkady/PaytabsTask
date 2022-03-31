@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kady.muhammad.ext.MockedServer
 import kady.muhammad.paytabstask.domain.Repo
 import kady.muhammad.paytabstask.domain.Result
-import kady.muhammad.paytabstask.presentation.characters_screen.CharactersViewModel
+import kady.muhammad.paytabstask.presentation.screens.characters_screen.CharactersViewModel
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
