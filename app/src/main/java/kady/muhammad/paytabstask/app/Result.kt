@@ -1,6 +1,6 @@
 package kady.muhammad.paytabstask.app
 
-import kady.muhammad.paytabstask.presentation.entities.UICharacter
+import kady.muhammad.paytabstask.presentation.entities.UICharacterList
 
 sealed class Result<out T> {
     object Loading : Result<Nothing>()
@@ -8,4 +8,4 @@ sealed class Result<out T> {
     data class Error(val message: String) : Result<Nothing>()
 }
 
-typealias CharactersResult = Result<List<UICharacter>>
+typealias CharactersResult = Result<UICharacterList>

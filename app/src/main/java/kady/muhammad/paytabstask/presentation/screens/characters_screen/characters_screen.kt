@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,6 +15,7 @@ import coil.compose.AsyncImage
 import kady.muhammad.paytabstask.presentation.ui.Loader
 import kady.muhammad.paytabstask.app.Result
 import kady.muhammad.paytabstask.presentation.entities.UICharacter
+import kady.muhammad.paytabstask.presentation.entities.UICharacterList
 
 @Suppress("UNCHECKED_CAST")
 @Composable
@@ -24,22 +24,32 @@ fun CharactersScreen(viewModel: CharactersViewModel) {
     when (value) {
         is Result.Error -> Text(text = (value as Result.Error).message)
         Result.Loading -> Loader()
-        is Result.Success<*> -> CharactersList((value as Result.Success<List<UICharacter>>).data)
+        is Result.Success<*> -> {
+            val data = (value as Result.Success<UICharacterList>).data
+            CharactersList(
+                viewModel,
+                data.items, data.page
+            )
+        }
     }
 }
 
 @Composable
-fun CharactersList(characters: List<UICharacter>) {
+fun CharactersList(viewModel: CharactersViewModel, characters: List<UICharacter>, page: Int) {
     LazyColumn {
-        items(characters) {
+        items(characters.size) { i ->
             AsyncImage(
-                model = it.image,
+                model = characters[i].image,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
             )
+            if (i == characters.size - 1) {
+                println("BOTTOM page $page")
+                viewModel.charactersList(page.inc())
+            }
         }
         item {
             Box(modifier = Modifier.height(100.dp)) {
@@ -48,4 +58,3 @@ fun CharactersList(characters: List<UICharacter>) {
         }
     }
 }
-

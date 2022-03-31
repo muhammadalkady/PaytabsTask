@@ -7,7 +7,7 @@ class Repo(
     private val mapper: DataCharactersToDomainCharacters
 ) {
 
-    suspend fun charactersList(offset: Int): List<DomainCharacter> =
+    suspend fun charactersList(offset: Int): DomainCharacterList =
         mapper.map(marvelAPI.getCharacterList(offset = offset))
 
 }
