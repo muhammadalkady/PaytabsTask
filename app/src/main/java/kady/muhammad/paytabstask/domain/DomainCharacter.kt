@@ -10,11 +10,16 @@ class DataCharactersToDomainCharacters : Mapper<DataCharacters, DomainCharacterL
 
     override fun map(input: DataCharacters): DomainCharacterList {
         return DomainCharacterList(input.data.character.map {
+            val image = "${it.thumbnail.path}.${it.thumbnail.extension}"
             DomainCharacter(
                 it.name,
-                "${it.thumbnail.path}.${it.thumbnail.extension}"
+                if (image == NOT_FOUND_CHARACTER_IMAGE) "" else image
             )
         }, input.data.offset)
     }
 
+    companion object {
+        private const val NOT_FOUND_CHARACTER_IMAGE =
+            "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
+    }
 }
