@@ -24,12 +24,12 @@ class CharactersViewModel(
     val result: StateFlow<CharactersResult> get() = _result
 
     init {
-        charactersList(offset = offset)
+        charactersList(page = offset)
     }
 
-    fun charactersList(offset: Int) {
+    fun charactersList(page: Int) {
         viewModelScope.launch(context = cc) {
-            callAPI(domainCharacterToUICharacter) { repo.charactersList(offset) }
+            callAPI(domainCharacterToUICharacter) { repo.charactersList(page) }
                 .collect {
                     _result.value = _result.value + it
                 }

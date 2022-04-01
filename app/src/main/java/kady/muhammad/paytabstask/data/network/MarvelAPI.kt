@@ -52,7 +52,7 @@ class MarvelAPI(baseURL: String = BuildConfig.BASE_URL) {
      * */
     suspend fun getCharacterList(offset: Int):
             DataCharacters {
-        return service.getCharactersList(LIMIT, offset)
+        return service.getCharactersList(LIMIT, if (offset == 0) 0 else offset + 9)
     }
 
     companion object {

@@ -59,7 +59,6 @@ fun CharactersList(viewModel: CharactersViewModel, characters: List<UICharacter>
                     .height(150.dp)
             )
             if (i == characters.size - 1) {
-                println("BOTTOM page $page")
                 viewModel.charactersList(page.inc())
             }
         }
