@@ -19,6 +19,7 @@ class MockedServer {
     fun enqueueSuccess() {
         server.enqueue(
             MockResponse()
+                .setResponseCode(200)
                 .setBody(
                     MockResponseFileReader("characters_list_json_success.json")
                         .content
@@ -28,7 +29,7 @@ class MockedServer {
 
     fun enqueueError(code: Int) {
         server.enqueue(
-            MockResponse().setResponseCode(code)
+            MockResponse().setHttp2ErrorCode(code)
         )
     }
 

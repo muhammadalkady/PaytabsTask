@@ -1,6 +1,8 @@
 package kady.muhammad.paytabstask.app
 
 import android.app.Application
+import kady.muhammad.paytabstask.data.NetworkCharacterToDBCharacter
+import kady.muhammad.paytabstask.data.db.DB
 import kady.muhammad.paytabstask.data.network.MarvelAPI
 import kady.muhammad.paytabstask.domain.DataCharactersToDomainCharacters
 import kady.muhammad.paytabstask.domain.Repo
@@ -16,6 +18,7 @@ import org.koin.dsl.module
 class PaytabsTaskApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        DB.init(this)
         startKoin {
             androidLogger()
             androidContext(this@PaytabsTaskApp)
@@ -27,8 +30,9 @@ class PaytabsTaskApp : Application() {
 val appModule = module {
     val dataCharactersToDomainCharacters = DataCharactersToDomainCharacters()
     val domainCharacterToUICharacter = DomainCharacterToUICharacter()
+    val networkCharacterToDBCharacter = NetworkCharacterToDBCharacter()
     val marvelAPI = MarvelAPI()
-    val repo = Repo(marvelAPI, dataCharactersToDomainCharacters)
+    val repo = Repo(marvelAPI, DB, dataCharactersToDomainCharacters, networkCharacterToDBCharacter)
     single { dataCharactersToDomainCharacters }
     single { domainCharacterToUICharacter }
     single { marvelAPI }

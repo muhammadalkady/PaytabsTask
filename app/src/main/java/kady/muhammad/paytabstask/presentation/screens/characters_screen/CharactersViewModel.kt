@@ -2,7 +2,6 @@ package kady.muhammad.paytabstask.presentation.screens.characters_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kady.muhammad.paytabstask.app.CharactersResult
 import kady.muhammad.paytabstask.domain.Repo
 import kady.muhammad.paytabstask.app.Result
 import kady.muhammad.paytabstask.presentation.entities.DomainCharacterToUICharacter
@@ -20,8 +19,12 @@ class CharactersViewModel(
     offset: Int
 ) : ViewModel() {
 
-    private val _result: MutableStateFlow<CharactersResult> = MutableStateFlow(Result.Loading)
-    val result: StateFlow<CharactersResult> get() = _result
+    private val _result: MutableStateFlow<UICharacterList> = MutableStateFlow(UICharacterList.EMPTY)
+    private val _loading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val _error: MutableStateFlow<String> = MutableStateFlow("")
+    val result: StateFlow<UICharacterList> get() = _result
+    val loading: StateFlow<Boolean> get() = _loading
+    val error: StateFlow<String> get() = _error
 
     init {
         charactersList(page = offset)
@@ -31,23 +34,14 @@ class CharactersViewModel(
         viewModelScope.launch(context = cc) {
             callAPI(domainCharacterToUICharacter) { repo.charactersList(page) }
                 .collect {
-                    _result.value = _result.value + it
+                    _loading.value = it is Result.Loading
+                    _error.value = if (it !is Result.Error) "" else it.message
+                    when (it) {
+                        is Result.Success -> _result.value =
+                            UICharacterList(_result.value.items + it.data.items, it.data.page)
+                        else -> {}
+                    }
                 }
         }
-    }
-}
-
-private operator fun Result<UICharacterList>.plus(other: Result<UICharacterList>):
-        Result<UICharacterList> {
-    if (other !is Result.Success) return this
-    return when (this) {
-        is Result.Error -> other
-        Result.Loading -> other
-        is Result.Success -> Result.Success(
-            UICharacterList(
-                this.data.items + other.data.items,
-                page = other.data.page
-            )
-        )
     }
 }

@@ -1,21 +1,22 @@
 package kady.muhammad.paytabstask
 
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kady.muhammad.ext.MockedServer
 import kady.muhammad.paytabstask.domain.DataCharactersToDomainCharacters
 import kady.muhammad.paytabstask.domain.Repo
-import kady.muhammad.paytabstask.app.Result
+import kady.muhammad.paytabstask.data.NetworkCharacterToDBCharacter
+import kady.muhammad.paytabstask.data.db.DBCharacter
+import kady.muhammad.paytabstask.data.db.IDB
 import kady.muhammad.paytabstask.presentation.entities.DomainCharacterToUICharacter
+import kady.muhammad.paytabstask.presentation.entities.UICharacterList
 import kady.muhammad.paytabstask.presentation.screens.characters_screen.CharactersViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.test.*
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import org.mockito.MockitoAnnotations
@@ -24,18 +25,25 @@ import org.mockito.MockitoAnnotations
 class CharactersViewModelTest {
     @get:Rule
     val instantExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
-    private val server: MockedServer = MockedServer()
+    private var server: MockedServer? = null
     private var viewModel: CharactersViewModel? = null
     private var repo: Repo? = null
     private val dataCharactersToDomainCharacters = DataCharactersToDomainCharacters()
     private val domainCharacterToUICharacter = DomainCharacterToUICharacter()
+    private val networkCharacterToDBCharacter = NetworkCharacterToDBCharacter()
 
     @Before
     fun setUp() {
         Dispatchers.setMain(newFixedThreadPoolContext(1, "Test Thread"))
         MockitoAnnotations.openMocks(this)
-        server.start()
-        repo = Repo(server.marvelAPI, dataCharactersToDomainCharacters)
+        server = MockedServer()
+        server!!.start()
+        repo = Repo(
+            server!!.marvelAPI,
+            FakeDB(),
+            dataCharactersToDomainCharacters,
+            networkCharacterToDBCharacter
+        )
         viewModel = CharactersViewModel(
             cc = Dispatchers.Main,
             repo = repo!!,
@@ -45,26 +53,26 @@ class CharactersViewModelTest {
     }
 
     @Test
-    fun `charactersList first emits loading`(): Unit = runTest {
-        server.enqueueSuccess()
+    fun `Init state is loading`(): Unit = runTest {
+        server!!.enqueueSuccess()
+        val result = viewModel!!.loading.first()
+        assert(result)
+    }
+
+    @Test
+    fun `Characters list should emits EMPTY first`(): Unit = runTest {
+        server!!.enqueueSuccess()
+        viewModel!!.charactersList(0)
         val result = viewModel!!.result.first()
-        assert(result == Result.Loading)
+        assert(result == UICharacterList.EMPTY)
     }
 
     @Test
-    fun `charactersList emits success after loading`(): Unit = runTest {
-        server.enqueueSuccess()
+    fun `Characters list should emits non empty characters list`(): Unit = runTest {
+        server!!.enqueueSuccess()
+        viewModel!!.charactersList(0)
         val result = viewModel!!.result.drop(1).first()
-        assert(result is Result.Success<*>)
-    }
-
-    @Test
-    fun `charactersList emits error`(): Unit = runTest {
-        //Enqueue Server Error 500
-        server.enqueueError(500)
-        //Pass invalid offset
-        val result = viewModel!!.result.drop(1).first()
-        assert(result is Result.Error)
+        assert(result.items.isNotEmpty())
     }
 
     @After
@@ -72,6 +80,14 @@ class CharactersViewModelTest {
         Dispatchers.resetMain()
         viewModel = null
         repo = null
-        server.shutdown()
+        server!!.shutdown()
+        server = null
+    }
+
+    inner class FakeDB : IDB {
+        override fun init(context: Context) {}
+        override fun putCharacters(characters: List<DBCharacter>) {}
+        override fun getCharacters(offset: Int): List<DBCharacter> = emptyList()
+        override fun close() {}
     }
 }

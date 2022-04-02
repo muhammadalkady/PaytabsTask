@@ -7,6 +7,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.lang.Exception
 
 class MarvelAPI(baseURL: String = BuildConfig.BASE_URL) {
     /**
@@ -27,8 +28,20 @@ class MarvelAPI(baseURL: String = BuildConfig.BASE_URL) {
         .apply {
             if (BuildConfig.DEBUG)
                 addInterceptor(logging)
+                    .addNetworkInterceptor {
+                        val response = it.proceed(it.request())
+                        if (response.code != 200) {
+                            response.close()
+                            throw Exception("Network error code: ${response.code}")
+                        }
+                        response
+                    }
         }
         .build()
+
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
     /**
      * Build a retrofit instance with Marvel base URL and our OkHttp client
@@ -36,7 +49,7 @@ class MarvelAPI(baseURL: String = BuildConfig.BASE_URL) {
     private val retrofit = Retrofit.Builder()
         .client(client)
         .baseUrl(baseURL)
-        .addConverterFactory(Json.asConverterFactory(contentType))
+        .addConverterFactory(json.asConverterFactory(contentType))
         .build()
 
     /**
