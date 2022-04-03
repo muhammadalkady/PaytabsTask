@@ -1,5 +1,6 @@
 package kady.muhammad.paytabstask.presentation.screens.characters_screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -15,6 +16,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.skydoves.landscapist.CircularReveal
 import com.skydoves.landscapist.ShimmerParams
 import com.skydoves.landscapist.coil.CoilImage
@@ -34,7 +36,13 @@ fun CharactersScreen(viewModel: CharactersViewModel) {
         items(characters.size) { i ->
             val character = characters[i]
             val canLoadMore = i == characters.size - 1 && !isLoading && error.isEmpty()
-            CharacterImage(url = character.image, name = character.name)
+            Box {
+                CharacterImage(url = character.image, name = character.name)
+                CharacterName(
+                    modifier = Modifier.align(Alignment.BottomStart),
+                    name = character.name
+                )
+            }
             if (canLoadMore) viewModel.charactersList(page.inc())
         }
         if (isLoading) item { ListLoader() }
@@ -81,6 +89,18 @@ private fun CharacterImage(modifier: Modifier = Modifier, url: String, name: Str
         circularReveal = CircularReveal(duration = 350),
         contentDescription = name,
     )
+}
+
+@Composable
+private fun CharacterName(modifier: Modifier = Modifier, name: String) {
+    Box(
+        modifier = modifier
+            .padding(16.dp)
+            .background(Color.Black.copy(alpha = 0.5F))
+            .padding(16.dp)
+    ) {
+        Text(modifier = modifier, text = name, textAlign = TextAlign.Center, fontSize = 18.sp)
+    }
 }
 
 @Composable
