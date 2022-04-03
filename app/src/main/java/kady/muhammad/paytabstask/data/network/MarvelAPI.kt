@@ -2,7 +2,7 @@ package kady.muhammad.paytabstask.data.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kady.muhammad.paytabstask.BuildConfig
-import kady.muhammad.paytabstask.data.network.IMarvelAPI.Companion.LIMIT
+import kady.muhammad.paytabstask.data.network.IMarvelAPI.Companion.PAGE_LIMIT
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -45,7 +45,7 @@ class MarvelAPI(override val baseURL: String = BuildConfig.BASE_URL) : IMarvelAP
      * */
     override suspend fun getCharacterList(page: Int):
             DataCharacters {
-        return service.getCharactersList(LIMIT, pageToOffset(page))
+        return service.getCharactersList(PAGE_LIMIT, pageToOffset(page))
     }
 
 }

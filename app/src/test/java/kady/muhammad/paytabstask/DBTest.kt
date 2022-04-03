@@ -25,7 +25,7 @@ class DBTest {
     fun setUp() {
         Dispatchers.setMain(newFixedThreadPoolContext(1, "Test Thread"))
         BoxStore.deleteAllFiles(TEST_DIRECTORY)
-        db = DB(IMarvelAPI.LIMIT).apply { init(TEST_DIRECTORY) }
+        db = DB(IMarvelAPI.PAGE_LIMIT).apply { init(TEST_DIRECTORY) }
         repo = FakeRepo(db = db)
     }
 
@@ -34,7 +34,7 @@ class DBTest {
         val offset = 0
         repo.charactersList(offset)
         println(db.getCharacters(offset))
-        assert(db.getCharacters(offset).size == IMarvelAPI.LIMIT)
+        assert(db.getCharacters(offset).size == IMarvelAPI.PAGE_LIMIT)
     }
 
     @Test
@@ -44,7 +44,7 @@ class DBTest {
             repo.charactersList(page)
             repo.charactersList(page + 1)
             println(db.getCharacters(page))
-            assert(db.getCharacters(page).size == IMarvelAPI.LIMIT)
+            assert(db.getCharacters(page).size == IMarvelAPI.PAGE_LIMIT)
         }
 
     @Test
@@ -56,7 +56,7 @@ class DBTest {
             repo.charactersList(nextPage)
             println(db.getCharacters(page))
             println(db.getCharacters(nextPage))
-            assert(db.getCharacters(nextPage).size == IMarvelAPI.LIMIT)
+            assert(db.getCharacters(nextPage).size == IMarvelAPI.PAGE_LIMIT)
             assert(db.getCharacters(nextPage).map { it.dbId } == (11L..20L).toList())
         }
 

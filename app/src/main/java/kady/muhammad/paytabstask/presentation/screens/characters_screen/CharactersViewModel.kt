@@ -40,9 +40,9 @@ class CharactersViewModel(
             callAPI(domainMapper) { repo.charactersList(page, fromCacheFirst) }
                 .collect {
                     _loading.value = it is Result.Loading
+                    sendError(it)
                     when (it) {
                         is Result.Success -> sendSuccess(it)
-                        is Result.Error -> sendError(it)
                         else -> {}
                     }
                 }

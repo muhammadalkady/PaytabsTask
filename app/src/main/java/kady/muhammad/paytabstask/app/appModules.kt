@@ -15,13 +15,13 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    single { DataCharactersToDomainCharactersMapper() }
+    single { DataCharactersToDomainCharactersMapper(IMarvelAPI.PAGE_LIMIT) }
     single { DomainCharacterToUICharacterMapper() }
     single { NetworkCharacterToDBCharacterMapper() }
     single<IMarvelAPI> { MarvelAPI() }
     single {
         val context: Context = get()
-        val db: IDB = DB(IMarvelAPI.LIMIT)
+        val db: IDB = DB(IMarvelAPI.PAGE_LIMIT)
         db.init(context.applicationContext.filesDir)
         db
     }

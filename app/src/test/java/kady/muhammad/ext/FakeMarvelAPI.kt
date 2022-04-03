@@ -19,9 +19,9 @@ class FakeMarvelAPI : IMarvelAPI {
         return DataCharacters(
             200, DataCharacters.Data(
                 1, 1, page,
-                (1..IMarvelAPI.LIMIT).map {
+                (1..IMarvelAPI.PAGE_LIMIT).map {
                     DataCharacters.Data.Character(
-                        it + (page * IMarvelAPI.LIMIT), "name-offset-$page",
+                        it + (page * IMarvelAPI.PAGE_LIMIT), "name-offset-$page",
                         DataCharacters.Data.Character.Thumbnail(
                             "jpg",
                             "https://example.com/images"

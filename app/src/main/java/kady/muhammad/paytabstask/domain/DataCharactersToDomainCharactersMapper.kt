@@ -3,7 +3,8 @@ package kady.muhammad.paytabstask.domain
 import kady.muhammad.paytabstask.app.IMapper
 import kady.muhammad.paytabstask.data.network.DataCharacters
 
-class DataCharactersToDomainCharactersMapper : IMapper<DataCharacters, DomainCharacterList> {
+class DataCharactersToDomainCharactersMapper(private val pageLimit: Int) :
+    IMapper<DataCharacters, DomainCharacterList> {
 
     override fun map(input: DataCharacters): DomainCharacterList {
         return DomainCharacterList(input.data.character.map {
@@ -12,7 +13,7 @@ class DataCharactersToDomainCharactersMapper : IMapper<DataCharacters, DomainCha
                 it.name,
                 if (image == NOT_FOUND_CHARACTER_IMAGE) "" else image
             )
-        }, input.data.offset)
+        }, input.data.offset / pageLimit)
     }
 
     companion object {

@@ -47,13 +47,13 @@ interface IMarvelAPI {
      * */
     suspend fun getCharacterList(page: Int): DataCharacters
 
-    fun pageToOffset(page: Int) = page * LIMIT
+    fun pageToOffset(page: Int) = (page - 1) * PAGE_LIMIT
 
     companion object {
         /**
          * This is the max items that an API can return at one time.
          * */
-        const val LIMIT = 10
+        const val PAGE_LIMIT = 10
     }
 
 }
