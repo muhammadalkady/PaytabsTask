@@ -25,14 +25,13 @@ class DB(private val pageLimit: Int) : IDB {
         store.boxFor<DBCharacter>().put(characters)
     }
 
-    override fun getCharacters(offset: Int): List<DBCharacter> {
-        val upper = (offset + 1) * pageLimit
-        val lower = upper - (pageLimit - 1)
+    override fun getCharacters(page: Int): List<DBCharacter> {
+        val upper = page * pageLimit
+        val lower = if (page == 1) 1 else (upper - pageLimit) + 1
+        println("page = $page lower = $lower upper = $upper")
         return store
             .boxFor<DBCharacter>()
-            .query()
-            .between(DBCharacter_.__ID_PROPERTY, lower.toLong(), upper.toLong())
-            .build()
+            .query().between(DBCharacter_.dbId, lower.toLong(), upper.toLong()).build()
             .find()
     }
 

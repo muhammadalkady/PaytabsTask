@@ -17,7 +17,7 @@ class CharactersViewModel(
     private val repo: IRepo,
     private val domainMapper: DomainCharacterToUICharacterMapper,
     initCall: Boolean = true,
-    offset: Int
+    page: Int
 ) : ViewModel() {
 
     private val _result: MutableStateFlow<UICharacterList> = MutableStateFlow(UICharacterList.EMPTY)
@@ -29,21 +29,32 @@ class CharactersViewModel(
 
     init {
         if (initCall)
-            charactersList(page = offset)
+            charactersList(page = page, fromCacheFirst = true)
     }
 
-    fun charactersList(page: Int) {
+    fun charactersList(
+        page: Int = if (result.value.items.isNotEmpty()) result.value.page.inc() else 1,
+        fromCacheFirst: Boolean = true
+    ) {
         viewModelScope.launch(context = cc) {
-            callAPI(domainMapper) { repo.charactersList(page) }
+            callAPI(domainMapper) { repo.charactersList(page, fromCacheFirst) }
                 .collect {
                     _loading.value = it is Result.Loading
-                    _error.value = if (it !is Result.Error) "" else it.message
                     when (it) {
-                        is Result.Success -> _result.value =
-                            UICharacterList(_result.value.items + it.data.items, it.data.page)
+                        is Result.Success -> sendSuccess(it)
+                        is Result.Error -> sendError(it)
                         else -> {}
                     }
                 }
         }
+    }
+
+    private fun sendSuccess(result: Result.Success<UICharacterList>) {
+        _result.value =
+            UICharacterList(_result.value.items + result.data.items, result.data.page)
+    }
+
+    private fun sendError(result: Result<UICharacterList>) {
+        _error.value = if (result !is Result.Error) "" else result.message
     }
 }

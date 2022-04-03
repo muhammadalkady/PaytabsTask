@@ -40,23 +40,24 @@ class DBTest {
     @Test
     fun `Get characters from db should return items size = IMarvelAPI LIMIT after two subsequent inserts`() =
         runTest {
-            val offset = 0
-            repo.charactersList(offset)
-            repo.charactersList(offset + 1)
-            println(db.getCharacters(offset))
-            assert(db.getCharacters(offset).size == IMarvelAPI.LIMIT)
+            val page = 1
+            repo.charactersList(page)
+            repo.charactersList(page + 1)
+            println(db.getCharacters(page))
+            assert(db.getCharacters(page).size == IMarvelAPI.LIMIT)
         }
 
     @Test
     fun `Get characters from db with offset = 1 should return 10 items with ids from 11 to 20`() =
         runTest {
-            val offset = 0
-            val nextOffset = offset + 1
-            repo.charactersList(offset)
-            repo.charactersList(nextOffset)
-            println(db.getCharacters(offset))
-            assert(db.getCharacters(nextOffset).size == IMarvelAPI.LIMIT)
-            assert(db.getCharacters(nextOffset).map { it.dbId } == (11L..20L).toList())
+            val page = 1
+            val nextPage = page + 1
+            repo.charactersList(page)
+            repo.charactersList(nextPage)
+            println(db.getCharacters(page))
+            println(db.getCharacters(nextPage))
+            assert(db.getCharacters(nextPage).size == IMarvelAPI.LIMIT)
+            assert(db.getCharacters(nextPage).map { it.dbId } == (11L..20L).toList())
         }
 
     @After

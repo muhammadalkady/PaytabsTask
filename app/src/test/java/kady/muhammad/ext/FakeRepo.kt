@@ -18,8 +18,8 @@ class FakeRepo(
     override val networkMapper: NetworkCharacterToDBCharacterMapper =
         NetworkCharacterToDBCharacterMapper()
 
-    override suspend fun charactersList(offset: Int): DomainCharacterList {
-        val result: DataCharacters = marvelAPI.getCharacterList(offset)
+    override suspend fun charactersList(page: Int, fromCacheFirst: Boolean): DomainCharacterList {
+        val result: DataCharacters = marvelAPI.getCharacterList(page)
         db.putCharacters(result.data.character.map(networkMapper::map))
         return dataMapper.map(result)
     }

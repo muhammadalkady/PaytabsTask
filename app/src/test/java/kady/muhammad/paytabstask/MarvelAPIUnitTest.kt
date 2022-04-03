@@ -18,7 +18,7 @@ class MarvelAPIUnitTest {
     @Test
     fun `MarvelAPI parses json successfully`() = runBlocking {
         server.enqueueSuccess()
-        val result = server.marvelAPI.getCharacterList(offset = 0)
+        val result = server.marvelAPI.getCharacterList(page = 1)
         assert(result.data.character.isNotEmpty())
     }
 

@@ -40,11 +40,12 @@ class MarvelAPI(override val baseURL: String = BuildConfig.BASE_URL) : IMarvelAP
 
     /**
      * Get characters list from Marvel API
-     * @param offset an offset to start from it.
+     * @param page an offset to start from it.
      * @return CharactersListResponse parsed from json.
      * */
-    override suspend fun getCharacterList(offset: Int):
+    override suspend fun getCharacterList(page: Int):
             DataCharacters {
-        return service.getCharactersList(LIMIT, if (offset == 0) 0 else offset + 9)
+        return service.getCharactersList(LIMIT, pageToOffset(page))
     }
+
 }

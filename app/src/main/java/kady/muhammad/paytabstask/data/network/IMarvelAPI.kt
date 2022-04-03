@@ -42,10 +42,12 @@ interface IMarvelAPI {
 
     /**
      * Get characters list from Marvel API
-     * @param offset an offset to start from it.
+     * @param page an offset to start from it.
      * @return CharactersListResponse parsed from json.
      * */
-    suspend fun getCharacterList(offset: Int): DataCharacters
+    suspend fun getCharacterList(page: Int): DataCharacters
+
+    fun pageToOffset(page: Int) = page * LIMIT
 
     companion object {
         /**

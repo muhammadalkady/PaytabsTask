@@ -26,5 +26,5 @@ val appModule = module {
         db
     }
     single<IRepo> { Repo(get(), get(), get(), get()) }
-    viewModel { CharactersViewModel(repo = get(), domainMapper = get(), offset = 0) }
+    viewModel { CharactersViewModel(repo = get(), domainMapper = get(), page = 1) }
 }

@@ -28,7 +28,6 @@ import kady.muhammad.paytabstask.presentation.entities.UICharacterList
 fun CharactersScreen(viewModel: CharactersViewModel) {
     val charactersList: UICharacterList by viewModel.result.collectAsState()
     val characters = charactersList.items
-    val page = charactersList.page
     val isLoading: Boolean by viewModel.loading.collectAsState()
     val error: String by viewModel.error.collectAsState()
     val lazyColumnState = rememberLazyListState()
@@ -43,12 +42,12 @@ fun CharactersScreen(viewModel: CharactersViewModel) {
                     name = character.name
                 )
             }
-            if (canLoadMore) viewModel.charactersList(page.inc())
+            if (canLoadMore) viewModel.charactersList(fromCacheFirst = true)
         }
         if (isLoading) item { ListLoader() }
         if (error.isNotEmpty()) item {
             Error(error = error) {
-                viewModel.charactersList(page.inc())
+                viewModel.charactersList(fromCacheFirst = true)
             }
         }
     }

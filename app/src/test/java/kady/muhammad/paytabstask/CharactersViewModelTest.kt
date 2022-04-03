@@ -38,7 +38,7 @@ class CharactersViewModelTest {
         repo = repo,
         domainMapper = domainMapper,
         initCall = false,
-        offset = 0
+        page = 0
     )
 
     @Before
@@ -63,7 +63,7 @@ class CharactersViewModelTest {
     fun `UICharactersList should not be empty after a success call to API`(): Unit =
         runTest {
             server.enqueueSuccess()
-            viewModel.charactersList(0)
+            viewModel.charactersList(1, fromCacheFirst = false)
             val result = viewModel.result.drop(1).first()
             assert(result.items.isNotEmpty())
         }
@@ -71,7 +71,7 @@ class CharactersViewModelTest {
     @Test
     fun `Error should no be empty after a server error`(): Unit = runTest {
         server.enqueueError(500)
-        viewModel.charactersList(0)
+        viewModel.charactersList(1, fromCacheFirst = false)
         val result = viewModel.error.drop(1).first()
         assert(result.isNotEmpty())
     }

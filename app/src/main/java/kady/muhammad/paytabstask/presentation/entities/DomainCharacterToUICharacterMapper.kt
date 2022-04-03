@@ -5,6 +5,6 @@ import kady.muhammad.paytabstask.domain.DomainCharacterList
 
 class DomainCharacterToUICharacterMapper : IMapper<DomainCharacterList, UICharacterList> {
     override fun map(input: DomainCharacterList): UICharacterList {
-        return UICharacterList(input.items.map { UICharacter(it.name, it.image) }, input.offset)
+        return UICharacterList(input.items.map { UICharacter(it.name, it.image) }, input.page)
     }
 }

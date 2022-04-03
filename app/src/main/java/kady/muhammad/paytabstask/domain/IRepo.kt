@@ -9,5 +9,12 @@ interface IRepo {
     val db: IDB
     val dataMapper: DataCharactersToDomainCharactersMapper
     val networkMapper: NetworkCharacterToDBCharacterMapper
-    suspend fun charactersList(offset: Int): DomainCharacterList
+    suspend fun charactersList(page: Int, fromCacheFirst: Boolean = true): DomainCharacterList
+    suspend fun <T> fromCacheOrElse(
+        fromCacheFirst: Boolean,
+        fromCacheBlock: suspend () -> T,
+        fromAPIBlock: suspend () -> T
+    ): T {
+        return if (fromCacheFirst) fromCacheBlock() else fromAPIBlock()
+    }
 }

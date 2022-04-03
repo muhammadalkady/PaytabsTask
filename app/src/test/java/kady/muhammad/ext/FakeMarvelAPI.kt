@@ -15,13 +15,13 @@ class FakeMarvelAPI : IMarvelAPI {
         .baseUrl(baseURL)
         .build()
 
-    override suspend fun getCharacterList(offset: Int): DataCharacters {
+    override suspend fun getCharacterList(page: Int): DataCharacters {
         return DataCharacters(
             200, DataCharacters.Data(
-                1, 1, offset,
+                1, 1, page,
                 (1..IMarvelAPI.LIMIT).map {
                     DataCharacters.Data.Character(
-                        it + (offset * IMarvelAPI.LIMIT), "name-offset-$offset",
+                        it + (page * IMarvelAPI.LIMIT), "name-offset-$page",
                         DataCharacters.Data.Character.Thumbnail(
                             "jpg",
                             "https://example.com/images"
