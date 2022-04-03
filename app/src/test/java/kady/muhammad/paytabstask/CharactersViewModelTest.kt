@@ -27,59 +27,49 @@ class CharactersViewModelTest {
     val instantExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
 
     //
-    private var _server: MockedServer? = null
-    private val server: MockedServer get() = _server!!
-
-    //
-    private var _repo: IRepo? = null
-    private val repo: IRepo get() = _repo!!
-
-    //
-    private var _viewModel: CharactersViewModel? = null
-    private val viewModel: CharactersViewModel get() = _viewModel!!
-
-    //
     private val dataMapper = DataCharactersToDomainCharactersMapper()
     private val domainMapper = DomainCharacterToUICharacterMapper()
     private val networkMapper = NetworkCharacterToDBCharacterMapper()
+
+    //
+    private val server: MockedServer = MockedServer().apply { start() }
+    private val repo: IRepo = Repo(server.marvelAPI, FakeDB(), dataMapper, networkMapper)
+    private var viewModel: CharactersViewModel = CharactersViewModel(
+        repo = repo,
+        domainMapper = domainMapper,
+        initCall = false,
+        offset = 0
+    )
 
     @Before
     fun setUp() {
         Dispatchers.setMain(newFixedThreadPoolContext(1, "Test Thread"))
         MockitoAnnotations.openMocks(this)
-        _server = MockedServer()
-        server.start()
-        _repo = Repo(server.marvelAPI, FakeDB(), dataMapper, networkMapper)
-        _viewModel = CharactersViewModel(
-            repo = repo,
-            domainMapper = domainMapper,
-            initCall = false,
-            offset = 0
-        )
     }
 
     @Test
-    fun `Init state is loading`(): Unit = runTest {
+    fun `Initial state should be loading`(): Unit = runTest {
         val result = viewModel.loading.first()
         assert(result)
     }
 
     @Test
-    fun `Characters list should emits EMPTY first`(): Unit = runTest {
+    fun `Initial UICharactersList should be EMPTY`(): Unit = runTest {
         val result = viewModel.result.first()
         assert(result == UICharacterList.EMPTY)
     }
 
     @Test
-    fun `Characters list should emits non empty characters list`(): Unit = runTest {
-        server.enqueueSuccess()
-        viewModel.charactersList(0)
-        val result = viewModel.result.drop(1).first()
-        assert(result.items.isNotEmpty())
-    }
+    fun `UICharactersList should not be empty after a success call to API`(): Unit =
+        runTest {
+            server.enqueueSuccess()
+            viewModel.charactersList(0)
+            val result = viewModel.result.drop(1).first()
+            assert(result.items.isNotEmpty())
+        }
 
     @Test
-    fun `Error should no be empty when server returns error`(): Unit = runTest {
+    fun `Error should no be empty after a server error`(): Unit = runTest {
         server.enqueueError(500)
         viewModel.charactersList(0)
         val result = viewModel.error.drop(1).first()
@@ -90,9 +80,6 @@ class CharactersViewModelTest {
     fun tearDown() {
         Dispatchers.resetMain()
         server.shutdown()
-        _viewModel = null
-        _repo = null
-        _server = null
     }
 
 }
