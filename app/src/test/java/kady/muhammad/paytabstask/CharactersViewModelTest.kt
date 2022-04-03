@@ -1,14 +1,13 @@
 package kady.muhammad.paytabstask
 
-import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kady.muhammad.ext.FakeDB
 import kady.muhammad.ext.MockedServer
-import kady.muhammad.paytabstask.domain.DataCharactersToDomainCharacters
+import kady.muhammad.paytabstask.domain.DataCharactersToDomainCharactersMapper
 import kady.muhammad.paytabstask.domain.Repo
-import kady.muhammad.paytabstask.data.NetworkCharacterToDBCharacter
-import kady.muhammad.paytabstask.data.db.DBCharacter
-import kady.muhammad.paytabstask.data.db.IDB
-import kady.muhammad.paytabstask.presentation.entities.DomainCharacterToUICharacter
+import kady.muhammad.paytabstask.data.NetworkCharacterToDBCharacterMapper
+import kady.muhammad.paytabstask.domain.IRepo
+import kady.muhammad.paytabstask.presentation.entities.DomainCharacterToUICharacterMapper
 import kady.muhammad.paytabstask.presentation.entities.UICharacterList
 import kady.muhammad.paytabstask.presentation.screens.characters_screen.CharactersViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,69 +24,67 @@ import org.mockito.MockitoAnnotations
 class CharactersViewModelTest {
     @get:Rule
     val instantExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
-    private var server: MockedServer? = null
-    private var viewModel: CharactersViewModel? = null
-    private var repo: Repo? = null
-    private val dataCharactersToDomainCharacters = DataCharactersToDomainCharacters()
-    private val domainCharacterToUICharacter = DomainCharacterToUICharacter()
-    private val networkCharacterToDBCharacter = NetworkCharacterToDBCharacter()
+
+    //
+    private var _server: MockedServer? = null
+    private val server: MockedServer get() = _server!!
+
+    //
+    private var _repo: IRepo? = null
+    private val repo: IRepo get() = _repo!!
+
+    //
+    private var _viewModel: CharactersViewModel? = null
+    private val viewModel: CharactersViewModel get() = _viewModel!!
+
+    //
+    private val dataMapper = DataCharactersToDomainCharactersMapper()
+    private val domainMapper = DomainCharacterToUICharacterMapper()
+    private val networkMapper = NetworkCharacterToDBCharacterMapper()
 
     @Before
     fun setUp() {
         Dispatchers.setMain(newFixedThreadPoolContext(1, "Test Thread"))
         MockitoAnnotations.openMocks(this)
-        server = MockedServer()
-        server!!.start()
-        repo = Repo(
-            server!!.marvelAPI,
-            FakeDB(),
-            dataCharactersToDomainCharacters,
-            networkCharacterToDBCharacter
-        )
-        viewModel = CharactersViewModel(
-            cc = Dispatchers.Main,
-            repo = repo!!,
-            domainCharacterToUICharacter = domainCharacterToUICharacter,
+        _server = MockedServer()
+        server.start()
+        _repo = Repo(server.marvelAPI, FakeDB(), dataMapper, networkMapper)
+        _viewModel = CharactersViewModel(
+            repo = repo,
+            domainMapper = domainMapper,
+            initCall = false,
             offset = 0
         )
     }
 
     @Test
     fun `Init state is loading`(): Unit = runTest {
-        server!!.enqueueSuccess()
-        val result = viewModel!!.loading.first()
+        val result = viewModel.loading.first()
         assert(result)
     }
 
     @Test
     fun `Characters list should emits EMPTY first`(): Unit = runTest {
-        server!!.enqueueSuccess()
-        viewModel!!.charactersList(0)
-        val result = viewModel!!.result.first()
+        server.enqueueSuccess()
+        viewModel.charactersList(0)
+        val result = viewModel.result.first()
         assert(result == UICharacterList.EMPTY)
     }
 
     @Test
     fun `Characters list should emits non empty characters list`(): Unit = runTest {
-        server!!.enqueueSuccess()
-        viewModel!!.charactersList(0)
-        val result = viewModel!!.result.drop(1).first()
+        viewModel.charactersList(0)
+        val result = viewModel.result.drop(1).first()
         assert(result.items.isNotEmpty())
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
-        viewModel = null
-        repo = null
-        server!!.shutdown()
-        server = null
+        server.shutdown()
+        _viewModel = null
+        _repo = null
+        _server = null
     }
 
-    inner class FakeDB : IDB {
-        override fun init(context: Context) {}
-        override fun putCharacters(characters: List<DBCharacter>) {}
-        override fun getCharacters(offset: Int): List<DBCharacter> = emptyList()
-        override fun close() {}
-    }
 }

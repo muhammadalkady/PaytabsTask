@@ -2,9 +2,9 @@ package kady.muhammad.paytabstask.presentation.screens.characters_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kady.muhammad.paytabstask.domain.Repo
 import kady.muhammad.paytabstask.app.Result
-import kady.muhammad.paytabstask.presentation.entities.DomainCharacterToUICharacter
+import kady.muhammad.paytabstask.domain.IRepo
+import kady.muhammad.paytabstask.presentation.entities.DomainCharacterToUICharacterMapper
 import kady.muhammad.paytabstask.presentation.entities.UICharacterList
 import kady.muhammad.paytabstask.presentation.ext.callAPI
 import kotlinx.coroutines.flow.*
@@ -14,8 +14,9 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 class CharactersViewModel(
     private val cc: CoroutineContext = EmptyCoroutineContext,
-    private val repo: Repo,
-    private val domainCharacterToUICharacter: DomainCharacterToUICharacter,
+    private val repo: IRepo,
+    private val domainMapper: DomainCharacterToUICharacterMapper,
+    initCall: Boolean = true,
     offset: Int
 ) : ViewModel() {
 
@@ -27,12 +28,13 @@ class CharactersViewModel(
     val error: StateFlow<String> get() = _error
 
     init {
-        charactersList(page = offset)
+        if (initCall)
+            charactersList(page = offset)
     }
 
     fun charactersList(page: Int) {
         viewModelScope.launch(context = cc) {
-            callAPI(domainCharacterToUICharacter) { repo.charactersList(page) }
+            callAPI(domainMapper) { repo.charactersList(page) }
                 .collect {
                     _loading.value = it is Result.Loading
                     _error.value = if (it !is Result.Error) "" else it.message

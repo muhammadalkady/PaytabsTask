@@ -4,14 +4,7 @@ import android.content.Context
 import io.objectbox.BoxStore
 import io.objectbox.kotlin.boxFor
 
-interface IDB {
-    fun init(context: Context)
-    fun putCharacters(characters: List<DBCharacter>)
-    fun getCharacters(offset: Int): List<DBCharacter>
-    fun close()
-}
-
-object DB : IDB {
+class DB : IDB {
 
     private lateinit var store: BoxStore
 

@@ -1,15 +1,17 @@
 package kady.muhammad.ext
 
+import kady.muhammad.paytabstask.data.network.IMarvelAPI
 import kady.muhammad.paytabstask.data.network.MarvelAPI
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 
 class MockedServer {
     private val server: MockWebServer = MockWebServer()
-    val marvelAPI by lazy { MarvelAPI(server.url("/").toString()) }
+    val marvelAPI: IMarvelAPI = MarvelAPI()
 
     fun start() {
         server.start(MOCK_WEBSERVER_PORT)
+
     }
 
     fun shutdown() {
@@ -34,7 +36,7 @@ class MockedServer {
     }
 
     companion object {
-        private const val MOCK_WEBSERVER_PORT = 8000
+        private const val MOCK_WEBSERVER_PORT = 8080
 
     }
 }
