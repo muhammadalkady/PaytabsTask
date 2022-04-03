@@ -7,11 +7,12 @@ import okhttp3.mockwebserver.MockWebServer
 
 class MockedServer {
     private val server: MockWebServer = MockWebServer()
-    val marvelAPI: IMarvelAPI = MarvelAPI()
+    lateinit var marvelAPI: IMarvelAPI
 
     fun start() {
         server.start(MOCK_WEBSERVER_PORT)
-
+        val url = server.url("/")
+        marvelAPI = MarvelAPI(url.toString())
     }
 
     fun shutdown() {
@@ -31,12 +32,13 @@ class MockedServer {
 
     fun enqueueError(code: Int) {
         server.enqueue(
-            MockResponse().setHttp2ErrorCode(code)
+            MockResponse()
+                .setResponseCode(code)
         )
     }
 
     companion object {
-        private const val MOCK_WEBSERVER_PORT = 8080
+        private const val MOCK_WEBSERVER_PORT = 8000
 
     }
 }
