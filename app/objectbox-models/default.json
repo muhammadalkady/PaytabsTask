@@ -5,14 +5,13 @@
   "entities": [
     {
       "id": "1:5908923019529942121",
-      "lastPropertyId": "3:5704299103373734542",
+      "lastPropertyId": "5:2569029689040518397",
       "name": "DBCharacter",
       "properties": [
         {
           "id": "1:3009480052300142707",
           "name": "id",
-          "type": 6,
-          "flags": 129
+          "type": 5
         },
         {
           "id": "2:1004961711847515703",
@@ -23,6 +22,12 @@
           "id": "3:5704299103373734542",
           "name": "name",
           "type": 9
+        },
+        {
+          "id": "5:2569029689040518397",
+          "name": "dbId",
+          "type": 6,
+          "flags": 1
         }
       ],
       "relations": []
@@ -36,7 +41,9 @@
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    3663342026801761001
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

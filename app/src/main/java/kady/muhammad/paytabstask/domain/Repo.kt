@@ -8,14 +8,14 @@ import kady.muhammad.paytabstask.data.network.IMarvelAPI
 class Repo(
     override val marvelAPI: IMarvelAPI,
     override val db: IDB,
-    override val domainMapper: DataCharactersToDomainCharactersMapper,
+    override val dataMapper: DataCharactersToDomainCharactersMapper,
     override val networkMapper: NetworkCharacterToDBCharacterMapper,
 ) : IRepo {
 
     override suspend fun charactersList(offset: Int): DomainCharacterList {
         val input: DataCharacters = marvelAPI.getCharacterList(offset = offset)
         db.putCharacters(input.data.character.map(networkMapper::map))
-        return domainMapper.map(input)
+        return dataMapper.map(input)
     }
 
 }

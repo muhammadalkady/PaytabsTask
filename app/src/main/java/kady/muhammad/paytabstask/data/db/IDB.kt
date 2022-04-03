@@ -1,9 +1,9 @@
 package kady.muhammad.paytabstask.data.db
 
-import android.content.Context
+import java.io.File
 
 interface IDB {
-    fun init(context: Context)
+    fun init(path: File)
     fun putCharacters(characters: List<DBCharacter>)
     fun getCharacters(offset: Int): List<DBCharacter>
     fun close()

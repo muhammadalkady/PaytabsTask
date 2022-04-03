@@ -7,7 +7,7 @@ import kady.muhammad.paytabstask.data.network.IMarvelAPI
 interface IRepo {
     val marvelAPI: IMarvelAPI
     val db: IDB
-    val domainMapper: DataCharactersToDomainCharactersMapper
+    val dataMapper: DataCharactersToDomainCharactersMapper
     val networkMapper: NetworkCharacterToDBCharacterMapper
     suspend fun charactersList(offset: Int): DomainCharacterList
 }

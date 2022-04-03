@@ -1,16 +1,23 @@
 package kady.muhammad.paytabstask.data.db
 
-import android.content.Context
 import io.objectbox.BoxStore
+import io.objectbox.DebugFlags
 import io.objectbox.kotlin.boxFor
+import kady.muhammad.paytabstask.BuildConfig
+import java.io.File
 
-class DB : IDB {
+class DB(private val pageLimit: Int) : IDB {
 
     private lateinit var store: BoxStore
 
-    override fun init(context: Context) {
+    override fun init(path: File) {
         store = MyObjectBox.builder()
-            .androidContext(context.applicationContext)
+            .directory(path)
+            .apply {
+                if (BuildConfig.DEBUG) {
+                    debugFlags(DebugFlags.LOG_QUERIES or DebugFlags.LOG_QUERY_PARAMETERS)
+                }
+            }
             .build()
     }
 
@@ -19,7 +26,14 @@ class DB : IDB {
     }
 
     override fun getCharacters(offset: Int): List<DBCharacter> {
-        return store.boxFor<DBCharacter>().all
+        val upper = (offset + 1) * pageLimit
+        val lower = upper - (pageLimit - 1)
+        return store
+            .boxFor<DBCharacter>()
+            .query()
+            .between(DBCharacter_.__ID_PROPERTY, lower.toLong(), upper.toLong())
+            .build()
+            .find()
     }
 
     override fun close() {
